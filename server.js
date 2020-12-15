@@ -72,49 +72,167 @@ app.use((req, res, next) => {
 
 
 app.get('/budget', async (req, res) => {
-    const authHeader = req.headers.authorization;
+    // const authHeader = req.headers.authorization;
     //console.log(req.headers)
-    if (authHeader) {
-        const token = authHeader.split(' ')[1];
-        //console.log(data)
-
-        jwt.verify(token, secretKey, function (err, d) {
-            if (err) {
-                console.log(err);
-                // return res.sendStatus(403);
-            }
-
-                console.log(d)
-            // req.user = user;
-            // userID = user
-            // user
-
-            //next();
-        });
+    // console.log(authHeader)
+    const authHeader = req.headers.authorization;
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+            //res.send(data)
+        }); 
+        connection.query('SELECT * FROM budget WHERE userid = ?', [userid], function (error, results, fields){
+        
+            if(error) throw error;
+            res.json(results);
+            
+        })
     } else {
-        // res.sendStatus(401);
-        console.log("no authorization")
+        res.sendStatus(403).send("Forbidden")
     }
    
-    // connection.query('SELECT * FROM budget WHERE userid = ?', [userid], function (error, results, fields){
-        
-    //     if(error) throw error;
-    //     res.json(results);
-        
-    // })
 })
 
-app.post('/budget', jwtMW, async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-    const title = req.body.title;
-    const budget = req.body.budget;
-    const userid = req.body.userid;
-    connection.query('INSERT INTO budget (title, budget, userid) VALUES (?,?,?)', [title, budget, userid], function (error, results, fields){
-        console.log(results);
-        if(error) throw error;
-        res.json(results);
-        connection.end();
-    })
+app.post('/budget', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        //console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        //console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+        }); 
+        connection.query('INSERT INTO budget (title, budget, userid) VALUES (?,?,?)', [req.body.title, req.body.budget, userid], function (error, results, fields){
+            console.log(results);
+            if(error) throw error;
+            res.json(results);
+            
+        })
+    } else {
+        res.sendStatus(403).send("Forbidden")
+    }
+
+})
+
+app.get('/expenses', async (req, res) => {
+    
+    const authHeader = req.headers.authorization;
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+            //res.send(data)
+        }); 
+        connection.query('SELECT * FROM expenses WHERE userid = ?', [userid], function (error, results, fields){
+        
+            if(error) throw error;
+            res.json(results);
+            
+        })
+    } else {
+        res.sendStatus(403).send("Forbidden")
+    }
+   
+})
+
+app.post('/expenses', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        //console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        //console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+        }); 
+        connection.query('INSERT INTO expenses (title, budget, userid) VALUES (?,?,?)', [req.body.title, req.body.budget, userid], function (error, results, fields){
+            console.log(results);
+            if(error) throw error;
+            res.json(results);
+            
+        })
+    } else {
+        res.sendStatus(403).send("Forbidden")
+    }
+
+})
+app.delete('/expenses', async (req, res) => {
+    
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        //console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        //console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+        }); 
+        connection.query('DELETE FROM budget WHERE title = (?) AND userid = (?)', [req.body.title, userid], function (error, results, fields){
+            console.log(results);
+            if(error) throw error;
+            res.json(results);
+            
+        })
+    } else {
+        res.sendStatus(403).send("Forbidden")
+    }
+
+})
+app.put('/expenses', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        //console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        //console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+        }); 
+        connection.query('UPDATE budget SET budget = (?) WHERE title = (?) AND userid = (?)', [ req.body.budget, req.body.title, userid], function (error, results, fields){
+            console.log(results);
+            if(error) throw error;
+            res.json(results);
+            
+        })
+    } else {
+        res.sendStatus(403).send("Forbidden")
+    }
 })
 
 app.put('/budget', jwtMW, async (req, res) => {
@@ -130,52 +248,58 @@ app.put('/budget', jwtMW, async (req, res) => {
     })
 })
 
-app.delete('/budget', jwtMW, async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-    const title = req.body.title;
-    const budget = req.body.budget.
+app.delete('/budget', async (req, res) => {
+    
+    const authHeader = req.headers.authorization;
+    
+    if (authHeader){
+        let token = authHeader.split(' ')[1];
+        token = token.replace('"', "")
+        token = token.replace('"', "")
+        //console.log("budget", token)
+        let user = jwt_decode(token)
+        let userid = user.userid
+        //console.log(userid);
+        jwt.verify(token, secretKey, (err, data)=>{
+            if (err)
+                res.send(err)
+        }); 
+        connection.query('DELETE FROM budget WHERE title = (?) AND userid = (?)', [req.body.title, userid], function (error, results, fields){
+            console.log(results);
+            if(error) throw error;
+            res.json(results);
+            
+        })
+    } else {
+        res.sendStatus(403).send("Forbidden")
+    }
 
-    connection.query('DELETE FROM budget WHERE title = (?) AND userid = (?)', [title, userid], function (error, results, fields){
-        console.log(results);
-        if(error) throw error;
-        res.json(results);
-        connection.end();
-    })
 })
 
 //end of budget
 
 //start of user login
 
-app.post('/user/login', (req, res) => {
+app.post('/login', (req, res) => {
     
-    connection.query('SELECT * FROM user where email= (?) AND password= md5((?))', [req.body.email, req.body.password], function (error, user){  
-        
-        if (user.length > 0){
-            let token = jwt.sign({ id: user.id, email: user.email}, secretKey, {expiresIn: '1800'});
-            res.json({
-                success: true,
-                error: null,
-                token
-                
+    connection.query('SELECT * FROM user where email= (?) AND password= md5((?))', [req.body.email, req.body.password], function (error, user){
+        let userst = JSON.stringify(user)  
+        let userid = userst.substr(11,1);
+        console.log(userid)
+            jwt.sign({ userid: userid, exp: Math.floor(Date.now() / 1000) + (60*60)}, secretKey, function(err, token){
+
+                console.log("login", token);
+                res.json({
+                    success: true,
+                    error: null,
+                    token
+                });
             });
-            //console.log(token);
-            
-        } else{
-            res.status(401).json({
-                        success: false,
-                        token: null,
-                        error: 'Username or password is incorrect'
-                    })
-        }
-        
-    });
+})
 });
 
 app.post ('/user/signup', (req, res) => {
     
-    //var hashedPassword = bcrypt.hashSync(req.body.password, 10);
-
     connection.query('INSERT INTO user (email, password) VALUES (?,md5((?)))', [req.body.email, req.body.password], function (error, results, fields){
         
         if(error){
@@ -186,37 +310,6 @@ app.post ('/user/signup', (req, res) => {
         res.status(200).send({status: 'ok'});
         });
 });
-
-// app.get('/auth', jwtAuth, function(req, res, next){
-//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-//     connection.query("SELECT id, email FROM users WHERE id=(?)", [req.id], function (error, user){
-//         if (error){
-//             return res.status(500).send("There was a problem finding the user.");
-//         }
-//         if (!user){
-//             return res.status(404).send("No user found");
-//         }
-//         res.status(200).send(user);
-//     });
-// });
-
-// function jwtAuth(req, res, next) {
-//     const auth
-//     var secret = 'mysecret'
-//     if (!req.token) {
-//         return res.status(403).send({ auth: false, message: 'No token provided'});
-//     }
-
-//     nJwt.verify(req.token, secret, function(error, decoded){
-//         if (error){
-//             return res.status(500).send({ auth: false, message: 'Could not authenticate token'});
-//         }
-//         req.userId = decoded.body.id;
-//         next();
-//     });
-// }
-
-
 
 
 app.listen (port, () => {

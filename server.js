@@ -60,7 +60,7 @@ var connection = mysql.createConnection({
 // };
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1');
+    res.setHeader('Access-Control-Allow-Origin', 'http://157.245.127.34');
     res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
     
     next();

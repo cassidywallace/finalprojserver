@@ -60,7 +60,7 @@ var connection = mysql.createConnection({
 // };
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1');
     res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
     
     next();
@@ -236,7 +236,7 @@ app.put('/expenses', async (req, res) => {
 })
 
 app.put('/budget', jwtMW, async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
     const title = req.body.title;
     const budget = req.body.budget;
     const userid = req.body.userid;
